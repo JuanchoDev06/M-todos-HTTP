@@ -123,6 +123,19 @@ Content-Type: text/xml
 
 Siguiendo la metodología como con el método GET, aquí planteo un **ejemplo práctico** basándose en el PPI **Jobsi.**
 
+```java
+  @RestController
+@RequestMapping("/api/trabajos")
+public class TrabajoController {
+    @PostMapping
+    public ResponseEntity<Trabajo> crearTrabajo(@RequestBody Trabajo nuevoTrabajo) {
+        Trabajo trabajoGuardado = trabajoService.guardar(nuevoTrabajo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(trabajoGuardado);
+    }
+}
+```
+Un método en el cual se basa en recibir un JSON con los datos del nuevo trabajo y guardarlos en la base de datos.
+
 
 
 
