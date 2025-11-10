@@ -1,2 +1,3 @@
 # Métodos HTTP
-Consulta sobre conceptos de los diferentes métodos HTTP, con enfoque de ejemplo prácticos basados en mi PPI Jobsi
+En el mundo del desarrollo web existen diferentes métodos HTTP **(Protocolo de Transferencia de Hipertexto)**, también conocidos como verbos son los comandos que se utilizan para indicar la acción que se va a realizar sobre un recurso específico.
+En este trabajo se hablará sobre los diferente y más usados métodos dentro del ambiente HTTP.
