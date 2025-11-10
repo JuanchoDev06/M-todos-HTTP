@@ -280,7 +280,7 @@ Es un método HTTP el cual se encarga de eliminar recursos del servidor de maner
 
 Su objetivo es permitir que el cliente (una aplicación frontend) indique al servidor que borre un recurso identificado por una **URL específica.**
 
-###**Aplicabilidad:** 
+### **Aplicabilidad:** 
 Se aplica cuando el cliente necesita eliminar datos o entidades del servidor. 
 
 Ejemplo de casos comunes usando DELETE:	
@@ -304,11 +304,48 @@ PUT ➜ Actualizar Usuario, en el endpoint /api/usuarios/5
 
 DELETE ➜ Eliminar Usuario, en el endpoint /api/usuarios/5
 
+Por el lado de **SOAP** tampoco se usa DELETE, todas las operaciones de crear, actualizar y eliminar se envían mediante **POST** con un cuerpo **XML.**
 
+```xml
+<DeleteUser>
+   <UserId>5</UserId>
+</DeleteUser>
+```
 
+### **Ejemplo práctico de su uso en Jobsi:**
 
+```java
+@DeleteMapping("/jobs/published/delete/{jobId}")
+    public ResponseEntity<Void> eliminarTrabajoPublicado(@PathVariable UUID jobId, Authentication auth) {
+        String solicitanteCorreo = auth.getName();
+        //Ejecutamos el caso de uso
+        gestionTrabajosUseCase.eliminarTrabajoPorIdYUsuarioCorreoSolicitante(jobId, solicitanteCorreo);
+        return ResponseEntity.noContent().build();
+    }
+```
+En este caso se usa la anotación **@DeleteMapping** para permitir que el usuario elimine un Job. Si el trabajo existe, se elimina, si no, el servicio puede lanzar una excepción **404 Not Found.**
 
+Por otro lado, en el frontend con React se vería algo así:
 
+```jsx
+function EliminarTrabajo({ id }) {
+  const eliminar = () => {
+    if (confirm("¿Estás seguro de eliminar este trabajo?")) {
+      fetch(`https://api.jobsi.com/api/trabajos/${id}`, {
+        method: "DELETE"
+      })
+        .then(res => {
+          if (res.status === 204) alert("Trabajo eliminado con éxito");
+          else alert("No se pudo eliminar el trabajo");
+        })
+        .catch(err => console.error("Error:", err));
+    }
+  };
+
+  return <button onClick={eliminar}> Eliminar trabajo</button>;
+}
+```
+Aquí el usuario puede eliminar un trabajo desde la interfaz de **Jobsi**, usando una solicitud DELETE al backend.
 
 
 
