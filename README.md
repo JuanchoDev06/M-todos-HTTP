@@ -165,7 +165,7 @@ A continuación, algunos casos comunes con el uso de PUT:
 }
 ```
 
-## **Relación con la arquitectura Web:**
+### **Relación con la arquitectura Web:**
 
 En la arquitectura **REST, PUT** es un método **idempotente**, lo que significa que realizar la misma petición **varias veces**  no cambia el resultado.
 
@@ -176,7 +176,7 @@ PUT --> Actualizar Usuario, en el endpoint **/api/usuarios/5**, aquí se remplaz
 
 Por otro lado, en la **arquitectura SOAP** el método PUT no es muy usado puesto que SOAP funciona con mensajes XML dentro de un solo método HTTP (normalmente POST).
 
-**Ejemplo práctico con Jobsi**
+###**Ejemplo práctico con Jobsi**
 ```java
 @RestController
 @RequestMapping("/api/trabajos")
@@ -190,6 +190,90 @@ public class TrabajoController {
 ```
 Aquí en este método de Jobsi **@PutMapping** indica que se trata de una actualización completa del recurso.
 
+## **PATCH:**
+El método PATCH es utilizado para actualizar al igual que PUT, pero este **actualiza parcialmente un recurso** existente en el servidor.
 
+A diferencia del método **PUT** el cual remplaza el recurso en su totalidad, **PATCH** solo modifica campos específicos que son enviados en la solicitud.
 
+PATCH **se aplica** cuando no se necesita enviar todos los datos de un recurso, sino solo los campos que se desea modificar.
+
+Casos comunes basándose en los explicados con el método PUT:
+
+**Con PUT:** Actualizar toda la información de un usuario.
+  - PUT /api/usuarios/5
+```json
+{
+  "nombre": "Juan Andrés",
+  "email": "juancho@elpoli.edu.co",
+  "rol": "estudiante"
+}
+```
+
+**Con PATCH:** Actualizar solo el correo del usuario
+  -	PATCH /api/usuarios/5
+```json
+{ "email": "nuevo@jobsi.com" }
+```
+**Con PUT:** Actualizar un trabajo o publicación
+  -	PUT /api/trabajos/8
+```json
+{
+  "titulo": "Apoyo taller matematicas",
+  "descripcion": "Apoyar con conocimientos sobre taller de ecuaciones",
+  "estado": "PUBLISHED"
+}
+```
+
+**Con PATCH:** Cambiar el estado del trabajo
+  -	PATCH /api/trabajos/8
+```json
+{ "estado": "DONE"}
+```
+Con PATCH se evita tener que enviar **todo el objeto,** solo se envían los datos necesarios, lo cual lo hace más eficiente y rápido.
+
+### **Relación con la arquitectura Web:**
+
+PATCH forma parte de las **buenas prácticas REST** modernas.
+
+Su propósito es permitir **actualizaciones parciales**, lo que reduce el tráfico de red y mejora el rendimiento.
+
+Por el lado de **SOAP** no existe el método PATCH en esta arquitectura puesto que al basarse en XML y un único método POST para enviar mensajes, SOAP no distingue entre actualizaciones parciales o completas.
+
+### **Ejemplo práctico basado en la aplicación Jobsi:**
+```java
+@RestController
+@RequestMapping("/api/trabajos")
+public class TrabajoController {
+    @PatchMapping("/{id}")
+    public ResponseEntity<Trabajo> actualizarParcialmenteTrabajo(
+        @PathVariable Long id, 
+        @RequestBody Map<String, Object> cambios) {
+        Trabajo trabajoActualizado = trabajoService.actualizarParcial(id, cambios);
+        return ResponseEntity.ok(trabajoActualizado);
+    }
+}
+```
+En este ejemplo se usa la anotación **@PatchMapping** para aplicar cambios solo al estado del Job.
+
+Y por ejemplo en React sería algo así:
+
+```jsx
+function CambiarEstadoTrabajo({ id }) {
+  const cambiarEstado = () => {
+    fetch(`https://api.jobsi.com/api/trabajos/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estado: "DONE" })
+    })
+      .then(res => res.json())
+      .then(data => console.log("Estado actualizado:", data))
+      .catch(err => console.error("Error:", err));
+  };
+
+  return <button onClick={cambiarEstado}>Marcar como completado</button>;
+}
+```
+
+ 
+## **DELETE:**
 
