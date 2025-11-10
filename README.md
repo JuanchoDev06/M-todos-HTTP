@@ -124,7 +124,7 @@ Content-Type: text/xml
 Siguiendo la metodología como con el método GET, aquí planteo un **ejemplo práctico** basándose en el PPI **Jobsi.**
 
 ```java
-  @RestController
+@RestController
 @RequestMapping("/api/trabajos")
 public class TrabajoController {
     @PostMapping
@@ -136,7 +136,59 @@ public class TrabajoController {
 ```
 Un método en el cual se basa en recibir un JSON con los datos del nuevo trabajo y guardarlos en la base de datos.
 
+## **PUT:**
+El método **PUT** se utiliza para **actualizar un recurso existente** en el servidor.
 
+La gran diferencia con **POST** es que este crea, mientras que **PUT** reemplaza o actualiza completamente un recurso ya existente.
+
+Su aplicabilidad se basa principalmente en cuando un cliente tiene la necesidad de enviar datos nuevos, los cuales sustituyan un recurso **ya existente.**
+
+En la mayoría de los casos, se usa para **actualizaciones completas** (no parciales).
+
+A continuación, algunos casos comunes con el uso de PUT:
+1.	Actualizar toda la información de un usuario
+    -	PUT /api/usuarios/5
+```json
+{
+  "nombre": "Juan Andrés",
+  "email": "juancho@elpoli.edu.co",
+  "rol": "estudiante"
+}
+```
+2.	Actualizar un trabajo o publicación
+    -	PUT /api/trabajos/8
+```json
+{
+  "titulo": "Apoyo taller matematicas",
+  "descripcion": "Apoyar con conocimientos sobre taller de ecuaciones",
+  "estado": "PUBLISHED"
+}
+```
+
+## **Relación con la arquitectura Web:**
+
+En la arquitectura **REST, PUT** es un método **idempotente**, lo que significa que realizar la misma petición **varias veces**  no cambia el resultado.
+
+Ejemplo de REST:
+POST --> Crear Usuario, en el endpoint **/api/usuarios**  
+
+PUT --> Actualizar Usuario, en el endpoint **/api/usuarios/5**, aquí se remplazan completamente los datos de usuario con ID 5
+
+Por otro lado, en la **arquitectura SOAP** el método PUT no es muy usado puesto que SOAP funciona con mensajes XML dentro de un solo método HTTP (normalmente POST).
+
+**Ejemplo práctico con Jobsi**
+```java
+@RestController
+@RequestMapping("/api/trabajos")
+public class TrabajoController {
+    @PutMapping("/{id}")
+    public ResponseEntity<Trabajo> actualizarTrabajo(@PathVariable Long id, @RequestBody Trabajo trabajoActualizado) {
+        Trabajo trabajo = trabajoService.actualizar(id, trabajoActualizado);
+        return ResponseEntity.ok(trabajo);
+    }
+}
+```
+Aquí en este método de Jobsi **@PutMapping** indica que se trata de una actualización completa del recurso.
 
 
 
