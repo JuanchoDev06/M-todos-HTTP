@@ -3,7 +3,7 @@ En el mundo del desarrollo web existen diferentes métodos HTTP **(Protocolo de 
 
 En este trabajo se hablará sobre los diferente y más usados métodos dentro del ambiente HTTP.
 
-### **Get:** 
+## **Get:** 
 Para este método, cómo su nombre lo indica se encarga de **recuperar.** Este método principalmente se aplica para solicitar y recuperar datos de un servidor sin modificarlos. Así como se ha hablado en clase el método GET permite que un **cliente** (por ejemplo, una aplicación frontend) le pueda pedir datos al servidor. 
 
 Los **casos en que se utiliza** este método son los siguientes:
@@ -57,27 +57,71 @@ Por otro lado, GET no se usa tanto en la arquitectura SOAP puesto que es una arq
 
 **Ejemplo práctico:** Un ejemplo práctico el cual estoy usando en mi PPI Jobsi es el siguiente.
 
-    @RestController
-    @RequestMapping("/api/trabajos")
-    public class TrabajoController {
-        @GetMapping
-        public List<Trabajo> obtenerTodosLosTrabajos() {
-            return trabajoService.listarTodos();
-        }
-        @GetMapping("/{id}")
-        public Trabajo obtenerTrabajoPorId(@PathVariable Long id) {
-            return trabajoService.buscarPorId(id);
-        }
-    }
+  ```java
+  @RestController
+  @RequestMapping("/api/trabajos")
+  public class TrabajoController {
+      @GetMapping
+      public List<Trabajo> obtenerTodosLosTrabajos() {
+          return trabajoService.listarTodos();
+      }
+      @GetMapping("/{id}")
+      public Trabajo obtenerTrabajoPorId(@PathVariable Long id) {
+          return trabajoService.buscarPorId(id);
+      }
+  }
+  ```
 En este caso usar la anotación **@GetMapping** permite que el servidor sea capaz de responder diferentes solicitudes HTTP GET.
 
 
+## **POST:** 
+El método POST, como su nombre lo indica es un método el cual sirve para enviar datos hacia el servidor, todo esto con el fin de crear o procesar un recurso nuevo en el sistema.
+
+Se aplica principalmente en situaciones donde el cliente **debe enviar información nueva** al servidor para que esta sea procesada o almacenada.
+
+Se usa normalmente en casos como:
 
 
+1.	Registrar un nuevo usuario
+  -	**POST /api/usuarios**
+  En donde se envían datos al servidor
+```json
+  {
+    "nombre": "Juancho",
+    "email": "juancho@jobsi.com",
+    "password": "12345"
+  }
+```
 
+2.	Iniciar sesión (login), en donde se envían credenciales para validarlas
+  -	POST /api/auth/login
 
+Pasando a la **relación con la arquitectura web**, POST cumple un rol de creación de recursos nuevos cuando se habla de un ámbito **REST**, el servidor devuelve un código HTTP **201 Created** si la operación se hizo de manera exitosa.
 
+| **Acción**        | **Método** | **Endpoint**       | **Descripción**                                      |
+|--------------------|------------|--------------------|------------------------------------------------------|
+| Crear usuario      | POST       | `/api/usuarios`    | Crea un nuevo usuario en la base de datos.           |
+| Crear trabajo      | POST       | `/api/trabajos`    | Publica un nuevo trabajo en Jobsi.                   |
+| Enviar reseña      | POST       | `/api/resenas`     | Crea una nueva reseña.                               |
 
+En **SOAP** es la arquitectura en donde el método POST es el más usado y casi que obligatorio. Aquí las peticiones se envían en un campo XML, no JSON.
+
+Ejemplo con SOAP:
+POST /WeatherService HTTP/1.1
+
+Content-Type: text/xml
+
+```xml
+<soapenv:Envelope>
+   <soapenv:Body>
+      <GetWeather>
+         <City>Medellín</City>
+      </GetWeather>
+   </soapenv:Body>
+</soapenv:Envelope>
+```
+
+Siguiendo la metodología como con el método GET, aquí planteo un **ejemplo práctico** basándose en el PPI **Jobsi.**
 
 
 
