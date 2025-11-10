@@ -170,9 +170,9 @@ A continuación, algunos casos comunes con el uso de PUT:
 En la arquitectura **REST, PUT** es un método **idempotente**, lo que significa que realizar la misma petición **varias veces**  no cambia el resultado.
 
 Ejemplo de REST:
-POST --> Crear Usuario, en el endpoint **/api/usuarios**  
+POST ➜ Crear Usuario, en el endpoint **/api/usuarios**  
 
-PUT --> Actualizar Usuario, en el endpoint **/api/usuarios/5**, aquí se remplazan completamente los datos de usuario con ID 5
+PUT ➜ Actualizar Usuario, en el endpoint **/api/usuarios/5**, aquí se remplazan completamente los datos de usuario con ID 5
 
 Por otro lado, en la **arquitectura SOAP** el método PUT no es muy usado puesto que SOAP funciona con mensajes XML dentro de un solo método HTTP (normalmente POST).
 
@@ -276,4 +276,39 @@ function CambiarEstadoTrabajo({ id }) {
 
  
 ## **DELETE:**
+Es un método HTTP el cual se encarga de eliminar recursos del servidor de manera permanente o lógica. 
+
+Su objetivo es permitir que el cliente (una aplicación frontend) indique al servidor que borre un recurso identificado por una **URL específica.**
+
+###**Aplicabilidad:** 
+Se aplica cuando el cliente necesita eliminar datos o entidades del servidor. 
+
+Ejemplo de casos comunes usando DELETE:	
+  -	Eliminar un usuario:
+      DELETE /api/usuarios/5 ➜ Elimina al usuario con ID 5 del sistema.
+
+  - Eliminar un trabajo:
+      DELETE /api/trabajos/12
+      En el ciclo CRUD, este método forma la base de la operación **D (DELETE).**
+
+### **Relación con la arquitectura Web:**
+En las **APIs REST**, DELETE representa la acción de **remover un recurso existente** identificado por su URI.
+
+Por ejemplo:
+
+POST ➜ Crear Usuario, en el endpoint /api/usuarios 
+
+GET ➜ Obtener Usuario, en el endpoint /api/usuarios/5 
+
+PUT ➜ Actualizar Usuario, en el endpoint /api/usuarios/5
+
+DELETE ➜ Eliminar Usuario, en el endpoint /api/usuarios/5
+
+
+
+
+
+
+
+
 
