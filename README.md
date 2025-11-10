@@ -3,8 +3,8 @@ En el mundo del desarrollo web existen diferentes métodos HTTP **(Protocolo de 
 
 En este trabajo se hablará sobre los diferente y más usados métodos dentro del ambiente HTTP.
 
-### **Get:** Para este método, cómo su nombre lo indica se encarga de recuperar. Este método principalmente se aplica para solicitar y recuperar datos de un servidor sin modificarlos. Así como se ha hablado en clase el método GET permite que un cliente (por ejemplo, una aplicación frontend) le pueda pedir datos al servidor. 
+### **Get:** 
+Para este método, cómo su nombre lo indica se encarga de **recuperar.** Este método principalmente se aplica para solicitar y recuperar datos de un servidor sin modificarlos. Así como se ha hablado en clase el método GET permite que un **cliente** (por ejemplo, una aplicación frontend) le pueda pedir datos al servidor. 
 
-**negrita**
+Los **casos en que se utiliza** este método son los siguientes:
 
-no negrita
