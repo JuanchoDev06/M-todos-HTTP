@@ -348,4 +348,143 @@ function EliminarTrabajo({ id }) {
 Aquí el usuario puede eliminar un trabajo desde la interfaz de **Jobsi**, usando una solicitud DELETE al backend.
 
 
+## **OPTIONS:** 
+El método **OPTIONS** se usa para para **solicitar al servidor información sobre las capacidades o métodos permitidos** para un recurso específico o para todo el servidor. En palabras más sencillas con **OPTIONS** sirve para preguntar cosas cómo: ¿qué puedo hacer con este recurso?
+
+### **Aplicabilidad:** 
+Su aplicabilidad se basa en permitir al cliente conocer qué **operaciones HTTP están disponibles** en una URL determinada o para gestionar peticiones CORS (Cross-Origin Resource Sharing).
+
+Caso de uso con OPTIONS:
+1.	Verificar qué métodos soporta un endpoint:
+  •	Se hace esta petición HTTP ➜ OPTIONS /api/usuarios
+  •	A lo que el servidor responde ➜ Allow: GET, POST, PUT, DELETE, OPTIONS
+
+### **Relación con la arquitectura Web:** 
+Como se trató en el caso de uso anterior en una API RESTful, **OPTIONS** se usa para indicar **qué métodos son válidos** sobre un recurso.
+
+Ejemplo: **OPTIONS** ➜ Consultar métodos disponibles, en el endpoint **/api/usuarios**
+
+Esto devuelve todos los métodos soportados (GET, POST, etc).
+
+Por el lado de **SOAP** no implementa el método OPTIONS porque no usa los métodos HTTP estándar de forma explícita.
+Toda la comunicación SOAP ocurre a través de POST con contenido XML.
+
+### **Ejemplo práctico aplicado (caso real de Jobsi)**
+En Jobsi el frontend intenta ejecutar una solicitud **OPTIONS** antes de hacer el **POST** real.
+
+```javascript
+fetch("https://api.jobsi.com/api/usuarios", {
+  method: "POST",
+  body: JSON.stringify({ nombre: "Juancho" }),
+  headers: { "Content-Type": "application/json" }
+});
+```
+```java
+@Configuration
+public class CorsConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                    .allowedOrigins("https://jobsi-front.com")
+                    .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+                    .allowedHeaders("*");
+            }
+        };
+    }
+}
+```
+Esto le dice al servidor que acepte peticiones desde el dominio del frontend y que **responda correctamente a las solicitudes OPTIONS**.
+
+##**HEAD:**
+El método **HEAD** es casi idéntico a **GET**, pero con una gran diferencia:
+
+**HEAD** (como su nombre lo indica) solicita solo los encabezados (headers) de la respuesta, sin incluir el cuerpo (body).
+
+Esto significa que el servidor responde con la misma información de metadatos que enviaría en un GET (como tipo de contenido, tamaño, fecha de modificación, etc.), **pero sin enviar el contenido del recurso**.
+
+### **Aplicabilidad:**
+Entendamos un poco más el método **HEAD** con algunos casos comunes y su aplicabilidad.
+
+El método **HEAD** se utiliza cuando se necesita **verificar la existencia,** **disponibilidad o características de un recurso,** sin necesidad de obtenerlo completo.
+
+Casos de uso comunes: 
+
+1.	Verificar si un archivo o recurso existe
+  HEAD /imagenes/logo.png
+  ➜ El servidor devuelve encabezados con información del archivo sin enviarlo.
+
+2.	Comprobar la última fecha de modificación
+  HEAD /api/documento/45
+  ➜ Útil para determinar si un cliente debe actualizar su caché.
+
+### **Relación con la arquitectura Web:**
+
+**HEAD** se usa en **REST** cuando se necesita **metainformación del recurso**, no su contenido.
+Su comportamiento y permisos son los mismos que GET, pero sin el cuerpo de respuesta.
+
+Comparación:
+
+**GET** ➜ Obtener recurso, en el endpoint **/api/trabajos/1**, devuelve datos completos
+
+**HEAD** ➜ Verificar recurso, en el endpoint **/api/trabajos/1**, devuelve solo encabezados.
+
+**SOAP** no utiliza el método **HEAD**, ya que su comunicación ocurre completamente mediante POST con XML.
+
+Por tanto, HEAD se aplica únicamente a **arquitecturas RESTful o servicios HTTP puros**.
+
+### **Formas de uso:**
+
+-	Petición HTTP estándar: Aquí el cliente pregunta 
+    HEAD /api/usuarios/5 HTTP/1.1
+    Host: jobsi.com
+    ¿Existe el recurso /api/usuarios/5 y qué información tiene?
+
+- A lo que el servidor responde:
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    Content-Length: 128
+    Last-Modified: Tue, 05 Nov 2025 12:45:00 GMT
+
+-	En herramientas como Postman:
+    - curl -I https://api.jobsi.com/api/trabajos/15
+
+### **Ejemplo práctico basado en Jobsi:**
+
+
+```java
+@RestController
+@RequestMapping("/api/archivos")
+public class ArchivoController {
+
+    @HeadMapping("/{nombre}")
+    public ResponseEntity<Void> verificarArchivo(@PathVariable String nombre) {
+        boolean existe = archivoService.existeArchivo(nombre);
+
+        if (existe) {
+            return ResponseEntity.ok()
+                .header("Content-Type", "image/png")
+                .header("Content-Length", "2048")
+                .build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
+```
+Aquí, el endpoint responde a solicitudes **HEAD**, confirmando si el archivo existe o no, y devolviendo metadatos como tipo y tamaño.
+
+
+
+
+
+
+
+
+
+
+
+
 
