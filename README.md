@@ -398,7 +398,7 @@ public class CorsConfig {
 ```
 Esto le dice al servidor que acepte peticiones desde el dominio del frontend y que **responda correctamente a las solicitudes OPTIONS**.
 
-##**HEAD:**
+## **HEAD:**
 El método **HEAD** es casi idéntico a **GET**, pero con una gran diferencia:
 
 **HEAD** (como su nombre lo indica) solicita solo los encabezados (headers) de la respuesta, sin incluir el cuerpo (body).
