@@ -476,9 +476,84 @@ public class ArchivoController {
 ```
 Aquí, el endpoint responde a solicitudes **HEAD**, confirmando si el archivo existe o no, y devolviendo metadatos como tipo y tamaño.
 
+## **CONNNECT:** 
+Aunque es uno de los métodos menos usados por lo desarrolladores Web, pero fundamental en la **infraestructura de internet** es un método que se aplica principalmente en contextos donde hay un **proxy o firewall entre el cliente y el servidor** y se requiere una conexión segura o directa.
 
+### **Algunos de sus casos comunes son:**
+1.	Conexiones HTTPS a través de un proxy
+    -	Cuando se accede a una página HTTPS (por ejemplo, https://jobsi.com) desde una red corporativa o universitaria que usa un proxy, el navegador usa **CONNECT** para crear un túnel seguro a ese sitio.
+      
+2.	Establecer túneles TCP: Permite crear conexiones directas entre cliente y servidor para protocolos como:
+    -	TLS/SSL (HTTPS)
+    -	WebSockets
+    -	VPNs o SSH sobre HTTP
 
+3.	Evitar inspección del contenido (SSL tunneling)
+o	Una vez el túnel está establecido, el proxy no puede leer el contenido cifrado.
 
+### **Relación con la arquitectura Web:**
+
+**CONNECT** es un método que no pertenece al ciclo CRUD como tal, ni tampoco se usa para las **APIs REST ni SOAP**, su uso es a nivel de red, dentro del protocolo HTTP **antes de que siquiera exista la comunicación con la API RESTful.**
+
+**REST** se encarga de manejar recursos y datos, como lo es GET, POST, PUT…
+
+**CONNECT** se encarga de manejar el canal de comunicación seguro.
+
+**Ejemplo:**
+```pgsql
+Cliente ─────── CONNECT api.jobsi.com:443 ───────► Proxy ───────► Servidor Jobsi
+        ◄────────────── 200 Connection Established ────────────────◄
+              ↳ Tráfico HTTPS cifrado fluye directamente
+```
+
+### **Formas de uso:**
+
+1.	**Petición HTTP estándar (al proxy)**
+```bash
+CONNECT api.jobsi.com:443 HTTP/1.1
+Host: api.jobsi.com:443
+Proxy-Authorization: Basic aHVhbjozMjE= 
+```
+
+Aquí el cliente le pide al proxy:
+“Conéctame directamente con api.jobsi.com en el puerto 443 (HTTPS).”
+
+A lo que el proxy responde:
+```bash
+HTTP/1.1 200 Connection Established
+Proxy-Agent: MyProxyServer/1.0
+```
+Después de esto, el canal queda abierto y los datos cifrados (TLS) fluyen directamente entre el cliente y el servidor sin ser vistos por el proxy.
+
+2.	**En herramientas como cURL**
+```bash
+curl -x proxy.miempresa.com:8080 https://api.jobsi.com -v
+```
+Aquí, cURL internamente se ejecuta una petición CONNECT al proxy, luego se establece un túnel HTTPS y recién ahí hace el GET o POST que se necesita.
+
+3.	**En los navegadores**
+    -	Los navegadores modernos (como Chrome, Edge u Opera) usan CONNECT automáticamente cuando deben acceder a sitios HTTPS a través de proxies definidos en la red o en las configuraciones del sistema operativo. En este caso no se necesita escribir **CONNECT** por cuenta propia, ya que el mismo navegador lo gestiona internamente.
+
+### **Ejemplo práctico**
+
+Imaginemos el caso hipotético de que se está en una universidad o empresa que usa un **proxy institucional** para filtrar y monitorear tráfico web.
+
+1.	El navegador intenta acceder a https://api.jobsi.com.
+2.	La red detecta que debe pasar por el proxy (proxy.uni.edu:8080).
+3.	El navegador envía una solicitud:
+
+```bash
+CONNECT api.jobsi.com:443 HTTP/1.1
+Host: api.jobsi.com:443
+```
+
+4.	A lo que el proxy responde
+```bash
+HTTP/1.1 200 Connection Established
+```
+5.	Desde ese punto, todo el tráfico entre el cliente y api.jobsi.com va **cifrado** mediante TLS (Seguridad de la Capa de Transporte), dentro de ese túnel.
+
+Este proceso asegura que el proxy **no puede ver ni modificar** la información transmitida entre el navegador y el backend de Jobsi.
 
 
 
