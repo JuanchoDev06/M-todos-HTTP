@@ -176,7 +176,7 @@ PUT ➜ Actualizar Usuario, en el endpoint **/api/usuarios/5**, aquí se remplaz
 
 Por otro lado, en la **arquitectura SOAP** el método PUT no es muy usado puesto que SOAP funciona con mensajes XML dentro de un solo método HTTP (normalmente POST).
 
-###**Ejemplo práctico con Jobsi**
+### **Ejemplo práctico con Jobsi**
 ```java
 @RestController
 @RequestMapping("/api/trabajos")
