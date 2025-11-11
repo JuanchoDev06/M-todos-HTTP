@@ -555,6 +555,76 @@ HTTP/1.1 200 Connection Established
 
 Este proceso asegura que el proxy **no puede ver ni modificar** la información transmitida entre el navegador y el backend de Jobsi.
 
+## **TRACE:**
+El método **HTTP TRACE** se utiliza para **solicitar al servidor que devuelva exactamente lo que recibió del cliente**, con el fin de **verificar el camino que sigue la solicitud HTTP** a través de proxies, gateways o firewalls intermedios.
+
+#### **Aplicabilidad**
+El método TRACE se aplica en escenarios de **diagnóstico, depuración o auditoría** de comunicación HTTP, para comprobar:
+
+1.	Si algún proxy o firewall está modificando los encabezados.
+2.	Qué ruta siguió la solicitud.
+3.	Qué encabezados y contenido recibió exactamente el servidor.
+4.	Validar autenticación o configuración HTTP en entornos complejos.
+
+### **Relación con la arquitectura Web:**
+**TRACE**, (al igual que CONNECT) no forma parte del conjunto de operaciones CRUD ni se usa en la interacción de recursos (como GET, POST, etc.). Por eso es que no hace parte ni de **REST** ni tampoco de **SOAP**
+
+Sin embargo, **puede estar habilitado en algunos servidores HTTP** para propósitos de diagnóstico de API.
+
+### **Formas de uso:**
+1.	Petición HTTP estándar
+```bash
+TRACE /api/usuarios HTTP/1.1
+Host: jobsi.com
+User-Agent: PostmanRuntime/8.0.0
+```
+En este caso el cliente pide:
+“Devuélveme mi solicitud tal como la recibiste.”
+
+ A lo que el servidor responde:
+```bash
+HTTP/1.1 200 OK
+Content-Type: message/http
+
+TRACE /api/usuarios HTTP/1.1
+Host: jobsi.com
+User-Agent: PostmanRuntime/8.0.0
+```
+
+2.	En cURL
+```bash
+curl -v -X TRACE https://api.jobsi.com
+```
+Esto mostrará cómo responde el servidor y si devuelve tu propia solicitud reflejada.
+
+### **Ejemplo práctico aplicado con Jobsi:**
+Digamos que en un caso hipotético están llegando algunas peticiones desde el frontend de Jobsi llegan al backend con encabezados extraños o faltantes.
+
+Para diagnosticar si el proxy o el WAF (Web Application Firewall) de AWS está alterando las solicitudes, se podría habilitar temporalmente TRACE en el backend.
+```java
+@RestController
+@RequestMapping("/api/debug")
+public class DebugController {
+
+    @RequestMapping(value = "/trace", method = RequestMethod.TRACE)
+    public ResponseEntity<String> traceRequest(HttpServletRequest request) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(request.getMethod()).append(" ").append(request.getRequestURI()).append("\n");
+
+        // Mostrar todos los encabezados recibidos
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String header = headerNames.nextElement();
+            sb.append(header).append(": ").append(request.getHeader(header)).append("\n");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("message/http"))
+                .body(sb.toString());
+    }
+}
+```
+Este endpoint devuelve la misma información que recibió, ideal para depurar peticiones mientras se desarrolla o configuras un proxy reverso o un WAF.
 
 
 
